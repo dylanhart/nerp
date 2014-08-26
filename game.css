@@ -1,0 +1,29 @@
+#game {
+	width: 400px;
+	height: 600px;
+	border: 1px solid #ccc;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
+#title {
+	padding-top: 0px;
+	margin-top: 0px;
+}
+.center {
+	text-align: center;
+}
+.muted {
+	color: #aaaaaa;
+}
+body {
+	background-image: url("assets/images/nerpatbeach.png");
+}
+.content {
+	background-color: #fffffa;
+	border-right: solid 4px #ddccaa;
+	border-bottom: solid 4px #ddccaa;
+	width: 600px;
+	margin: auto;
+	border-radius: 30px;
+}
