@@ -29,6 +29,28 @@ var config = {
 	drawhitboxes: false
 }
 
+var imageLoader = {
+	loaded: 0,
+	total: 0,
+
+	loadImage: function(src) {
+		this.total++
+		img = new Image()
+
+		var that = this
+		img.onload = function() {
+			that.loaded++
+		}
+
+		img.src = src
+
+		return img
+	},
+	doneLoading: function() {
+		return this.loaded == this.total;
+	}
+}
+
 //utility to check if two objects are collided on screen {x, y, w, h}
 var areCollided = function(a, b) {
 	var hcol = (a.x < b.x && a.x + a.w > b.x) || (b.x < a.x && b.x + b.w > a.x)
@@ -85,6 +107,19 @@ var game = {
 	render: function(delta) {
 		context.clearRect(0, 0, config.size.width, config.size.height);
 		this.world.render(delta);
+		if (this.player.isdead) {
+			context.fillStyle = "rgba(0, 0, 0, .5)"
+			context.fillRect(0, 0, config.size.width, config.size.height)
+
+			context.fillStyle = "#fff"
+			context.textAlign = "center"
+			context.font = "36pt Sans"
+			context.fillText("Score: " + this.player.score,
+				config.size.width/2, config.size.height/2)
+			context.font = "14pt Sans"
+			context.fillText("R to restart", config.size.width/2,
+				config.size.height/2+18)
+		}
 	},
 	init: function() {
 		canvas.height = config.size.height;
@@ -160,8 +195,7 @@ game.world = {
 		}
 	},
 	init: function() {
-		this.bgimg = new Image()
-		this.bgimg.src = "assets/images/bg.png"
+		this.bgimg = imageLoader.loadImage("assets/images/bg.png")
 	}
 }
 
@@ -226,8 +260,7 @@ game.player = {
 	},
 	init: function() {
 		game.world.register(this);
-		this.img = new Image();
-		this.img.src = "assets/images/nerp2.png"
+		this.img = imageLoader.loadImage("assets/images/nerp2.png")
 	},
 	getCollisionBox: function() {
 		return {
@@ -354,24 +387,34 @@ game.walls = {
 	},
 	init: function() {
 		game.world.register(this)
-		this.columnimg = new Image()
-		this.columnimg.src = "assets/images/kelp.png"
+		this.columnimg = imageLoader.loadImage("assets/images/kelp.png")
 	}
 }
 
 game.init();
 
-
 //start
-var oldtime = Date.now();
-var time;
-
+var oldtime, time;
 
 (function loop() {
 	window.requestAnimFrame(loop);
 
-	time = Date.now();
-	game.update(time - oldtime);
-	game.render(time - oldtime);
-	oldtime = time;
+	if (!imageLoader.doneLoading()) {
+		game.render(0);
+		context.fillStyle = "rgba(0, 0, 0, .5)"
+		context.fillRect(0, 0, config.size.width, config.size.height)
+
+		context.fillStyle = "#fff"
+		context.textAlign = "center"
+		context.font = "48pt Sans"
+		context.fillText("Loading ("+imageLoader.loaded+"/"+imageLoader.total+")",
+			config.size.width/2, config.size.height/2)
+
+		oldtime = Date.now();
+	} else {
+		time = Date.now();
+		game.update(time - oldtime);
+		game.render(time - oldtime);
+		oldtime = time;
+	}
 })();
