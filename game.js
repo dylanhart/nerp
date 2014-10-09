@@ -93,7 +93,7 @@ var controls = {
 		});
 		document.addEventListener('keyup', function(event) {
 			controls.release(event.keyCode);
-		});		
+		});
 	}
 }
 controls.init();
@@ -136,6 +136,11 @@ var game = {
 		//register all the controls
 		controls.onPress(config.keymap.r, game.start)
 		controls.onPress(config.keymap.enter, game.start)
+        controls.onPress(config.keymap.space, function() {
+            if (game.player.isdead) {
+                game.start()
+            }
+        })
 
 		controls.onPress(config.keymap.up, function() {
 			game.player.jump()
@@ -242,7 +247,7 @@ game.player = {
 
 		this.pos.x += this.vel.x * delta;
 		this.pos.y += this.vel.y * delta;
-		
+
 
 		if (this.pos.y <= 0) {
 			this.pos.y = 0;
@@ -285,7 +290,7 @@ game.player = {
 	addScore: function(points) {
 		this.score += points
 		document.getElementById("title").innerHTML = "Floaty Nerp! Score: " + this.score
-		
+
 		//when the game is beaten
 		if (this.score >= 100) {
 			game.start()
