@@ -20,7 +20,9 @@ body {
 	background-image: url("assets/images/nerpatbeach.png");
 }
 .content {
+	padding-top: 10px;
 	background-color: #fffffa;
+	border: solid 1px #ddccaa;
 	border-right: solid 4px #ddccaa;
 	border-bottom: solid 4px #ddccaa;
 	width: 600px;
