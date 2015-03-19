@@ -207,14 +207,16 @@ game.world = {
 game.player = {
 	pos: {
 		x: 100,
-		y: 200
+		y: 200,
+		angle: 0
 	},
 	vel: {
 		x: 0,
 		y: 0
 	},
 	stats: {
-		jump: .25
+		jump: .25,
+		rotationSpeed: .015
 	},
 	size: 48,
 	hitbox: {
@@ -228,7 +230,7 @@ game.player = {
 	render: function(delta) {
 		context.save()
 		context.translate(this.pos.x, this.pos.y)
-		context.rotate(Math.max(this.vel.y / .3 * Math.PI/4, -Math.PI/2))
+		context.rotate(this.pos.angle)
 		if (this.isdead) context.scale(1,-1)
 		if (this.img !== undefined)
 			context.drawImage(this.img, -this.size/2, -this.size, this.size, this.size);
@@ -258,6 +260,13 @@ game.player = {
 			this.vel.y += game.world.gravity * delta;
 		}
 
+		var targetAngle = Math.max(this.vel.y / .3 * Math.PI/4, -Math.PI/2);
+		var maxRotation = this.stats.rotationSpeed * delta;
+		if (Math.abs(targetAngle - this.pos.angle) < maxRotation) {
+			this.pos.angle = targetAngle;
+		} else {
+			this.pos.angle += (targetAngle > this.pos.angle) ? maxRotation : -maxRotation;
+		}
 	},
 	jump: function() {
 		if (this.isdead || this.pos.y > config.size.height - 50) return;
@@ -282,6 +291,7 @@ game.player = {
 	reset: function() {
 		this.isdead = false
 		this.pos.y = config.size.height/2
+		this.pos.angle = 0
 		this.vel.y = 0
 		this.score = 0
 
