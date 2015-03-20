@@ -62,6 +62,7 @@ var areCollided = function(a, b) {
 var controls = {
 	keystate: {},
 	callbacks: {},
+	touchCallbacks: [],
 	press: function(key) {
 		this.keystate[key] = true;
 
@@ -74,11 +75,19 @@ var controls = {
 	release: function(key) {
 		this.keystate[key] = false;
 	},
+	touch: function() {
+		for (var i = 0; i < this.touchCallbacks.length; i++) {
+			this.touchCallbacks[i]();
+		}
+	},
 	onPress: function(key, func) {
 		if (this.callbacks[key] === undefined) {
 			this.callbacks[key] = [];
 		}
 		this.callbacks[key].push(func);
+	},
+	onTouch: function(func) {
+		this.touchCallbacks.push(func);
 	},
 	getState: function(name) {
 		var state = this.keystate[config.keymap[name]];
@@ -93,6 +102,9 @@ var controls = {
 		});
 		document.addEventListener('keyup', function(event) {
 			controls.release(event.keyCode);
+		});
+		document.getElementById('game').addEventListener('touchstart', function(event) {
+			controls.touch();
 		});
 	}
 }
@@ -150,6 +162,14 @@ var game = {
 		})
 		controls.onPress(config.keymap.space, function() {
 			game.player.jump()
+		})
+
+		controls.onTouch(function() {
+			if (game.player.isdead) {
+				game.start()
+			} else {
+				game.player.jump()
+			}
 		})
 	},
 	//resets the game
