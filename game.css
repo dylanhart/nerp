@@ -1,10 +1,14 @@
 #game {
-	width: 400px;
-	height: 600px;
+	width: 95%;
+	max-width: 400px;
 	border: 1px solid #ccc;
-    margin-left: auto;
-    margin-right: auto;
-    display: block;
+    display: inline-block;
+    position: relative;
+}
+#game::after {
+	padding-top: 150%;
+	display: block;
+	content: "";
 }
 #title {
 	padding-top: 0px;
@@ -25,7 +29,8 @@ body {
 	border: solid 1px #ddccaa;
 	border-right: solid 4px #ddccaa;
 	border-bottom: solid 4px #ddccaa;
-	width: 600px;
+	width: 100%;
+	max-width: 600px;
 	margin: auto;
 	border-radius: 30px;
 }
