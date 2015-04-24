@@ -63,6 +63,7 @@ var controls = {
 	keystate: {},
 	callbacks: {},
 	touchCallbacks: [],
+    clickCallbacks: [],
 	press: function(key) {
 		this.keystate[key] = true;
 
@@ -80,6 +81,11 @@ var controls = {
 			this.touchCallbacks[i]();
 		}
 	},
+    click: function() {
+        for (var i = 0; i < this.clickCallbacks.length; i++) {
+            this.clickCallbacks[i]();
+        }
+    },
 	onPress: function(key, func) {
 		if (this.callbacks[key] === undefined) {
 			this.callbacks[key] = [];
@@ -89,6 +95,9 @@ var controls = {
 	onTouch: function(func) {
 		this.touchCallbacks.push(func);
 	},
+    onClick: function(func) {
+        this.clickCallbacks.push(func);
+    },
 	getState: function(name) {
 		var state = this.keystate[config.keymap[name]];
 		if (state === undefined) {
@@ -105,6 +114,9 @@ var controls = {
 		});
 		document.getElementById('game').addEventListener('touchstart', function(event) {
 			controls.touch();
+		});
+		document.getElementById('game').addEventListener('mousedown', function(event) {
+			controls.click();
 		});
 	}
 }
@@ -164,13 +176,16 @@ var game = {
 			game.player.jump()
 		})
 
-		controls.onTouch(function() {
+        var jumpOrRestart = function() {
 			if (game.player.isdead) {
 				game.start()
 			} else {
 				game.player.jump()
 			}
-		})
+		};
+
+		controls.onTouch(jumpOrRestart);
+		controls.onClick(jumpOrRestart);
 	},
 	//resets the game
 	start: function() {
