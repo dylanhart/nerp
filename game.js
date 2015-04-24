@@ -160,19 +160,11 @@ var game = {
 		//register all the controls
 		controls.onPress(config.keymap.r, game.start);
 		controls.onPress(config.keymap.enter, game.start);
-        controls.onPress(config.keymap.space, function() {
-            if (game.player.isdead) {
-                game.start();
-            }
-        });
 
 		controls.onPress(config.keymap.up, function() {
 			game.player.jump();
 		});
 		controls.onPress(config.keymap.down, function() {
-			game.player.jump();
-		});
-		controls.onPress(config.keymap.space, function() {
 			game.player.jump();
 		});
 
@@ -184,6 +176,7 @@ var game = {
 			}
 		};
 
+        controls.onPress(config.keymap.space, jumpOrRestart);
 		controls.onTouch(jumpOrRestart);
 		controls.onClick(jumpOrRestart);
 	},
@@ -194,6 +187,7 @@ var game = {
 			game.walls.createWall(config.size.width*2 + (i * 200), Math.random() * (config.size.height - 300) + 150);
 		}
 		game.player.reset();
+        game.player.jump();
 	}
 };
 
