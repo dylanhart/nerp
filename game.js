@@ -27,36 +27,36 @@ var config = {
 		space: 32
 	},
 	drawhitboxes: false
-}
+};
 
 var imageLoader = {
 	loaded: 0,
 	total: 0,
 
 	loadImage: function(src) {
-		this.total++
-		img = new Image()
+		this.total++;
+		img = new Image();
 
-		var that = this
+		var that = this;
 		img.onload = function() {
-			that.loaded++
-		}
+			that.loaded++;
+		};
 
-		img.src = src
+		img.src = src;
 
-		return img
+		return img;
 	},
 	doneLoading: function() {
 		return this.loaded == this.total;
 	}
-}
+};
 
 //utility to check if two objects are collided on screen {x, y, w, h}
 var areCollided = function(a, b) {
-	var hcol = (a.x < b.x && a.x + a.w > b.x) || (b.x < a.x && b.x + b.w > a.x)
-	var vcol = (a.y < b.y && a.y + a.h > b.y) || (b.y < a.y && b.y + b.h > a.y)
-	return hcol && vcol
-}
+	var hcol = (a.x < b.x && a.x + a.w > b.x) || (b.x < a.x && b.x + b.w > a.x);
+	var vcol = (a.y < b.y && a.y + a.h > b.y) || (b.y < a.y && b.y + b.h > a.y);
+	return hcol && vcol;
+};
 
 //utility functions for controls
 var controls = {
@@ -119,7 +119,7 @@ var controls = {
 			controls.click();
 		});
 	}
-}
+};
 controls.init();
 
 
@@ -132,17 +132,17 @@ var game = {
 		context.clearRect(0, 0, config.size.width, config.size.height);
 		this.world.render(delta);
 		if (this.player.isdead) {
-			context.fillStyle = "rgba(0, 0, 0, .5)"
-			context.fillRect(0, 0, config.size.width, config.size.height)
+			context.fillStyle = "rgba(0, 0, 0, .5)";
+			context.fillRect(0, 0, config.size.width, config.size.height);
 
-			context.fillStyle = "#fff"
-			context.textAlign = "center"
-			context.font = "36pt Sans"
+			context.fillStyle = "#fff";
+			context.textAlign = "center";
+			context.font = "36pt Sans";
 			context.fillText("Score: " + this.player.score,
-				config.size.width/2, config.size.height/2)
-			context.font = "14pt Sans"
+				config.size.width/2, config.size.height/2);
+			context.font = "14pt Sans";
 			context.fillText("R to restart", config.size.width/2,
-				config.size.height/2+18)
+				config.size.height/2+18);
 		}
 	},
 	init: function() {
@@ -155,32 +155,32 @@ var game = {
 		this.player.init();
 
 		//reset
-		this.start()
+		this.start();
 
 		//register all the controls
-		controls.onPress(config.keymap.r, game.start)
-		controls.onPress(config.keymap.enter, game.start)
+		controls.onPress(config.keymap.r, game.start);
+		controls.onPress(config.keymap.enter, game.start);
         controls.onPress(config.keymap.space, function() {
             if (game.player.isdead) {
-                game.start()
+                game.start();
             }
-        })
+        });
 
 		controls.onPress(config.keymap.up, function() {
-			game.player.jump()
-		})
+			game.player.jump();
+		});
 		controls.onPress(config.keymap.down, function() {
-			game.player.jump()
-		})
+			game.player.jump();
+		});
 		controls.onPress(config.keymap.space, function() {
-			game.player.jump()
-		})
+			game.player.jump();
+		});
 
         var jumpOrRestart = function() {
 			if (game.player.isdead) {
-				game.start()
+				game.start();
 			} else {
-				game.player.jump()
+				game.player.jump();
 			}
 		};
 
@@ -189,13 +189,13 @@ var game = {
 	},
 	//resets the game
 	start: function() {
-		game.walls.walls = []
+		game.walls.walls = [];
 		for (var i = 0; i < 100; i++) {
-			game.walls.createWall(config.size.width*2 + (i * 200), Math.random() * (config.size.height - 300) + 150)
+			game.walls.createWall(config.size.width*2 + (i * 200), Math.random() * (config.size.height - 300) + 150);
 		}
-		game.player.reset()
+		game.player.reset();
 	}
-}
+};
 
 game.world = {
 	gravity: -.0005,
@@ -210,8 +210,8 @@ game.world = {
 	render: function(delta) {
 		//draw background
 		if (this.bgimg !== undefined) {
-			context.drawImage(this.bgimg, -this.scrollpos, 0)
-			context.drawImage(this.bgimg, this.bgsize-this.scrollpos, 0)
+			context.drawImage(this.bgimg, -this.scrollpos, 0);
+			context.drawImage(this.bgimg, this.bgsize-this.scrollpos, 0);
 		}
 
 		//draw entities
@@ -222,22 +222,22 @@ game.world = {
 	update: function(delta) {
 		//update background
 		if (!game.player.isdead) {
-			this.scrollpos += this.scrollspeed * delta
-			this.scrollpos %= this.bgsize
+			this.scrollpos += this.scrollspeed * delta;
+			this.scrollpos %= this.bgsize;
 		}
 		//update entities
 		for (var i = 0; i < this.entities.length; i++) {
 			if (this.entities[i].shouldRemove && this.entities[i].shouldRemove()) {
-				this.entities.splice(i--, 1)
+				this.entities.splice(i--, 1);
 			} else {
 				this.entities[i].update(delta);
 			}
 		}
 	},
 	init: function() {
-		this.bgimg = imageLoader.loadImage("assets/images/bg.png")
+		this.bgimg = imageLoader.loadImage("assets/images/bg.png");
 	}
-}
+};
 
 game.player = {
 	pos: {
@@ -263,20 +263,20 @@ game.player = {
 	isdead: false,
 	score: 0,
 	render: function(delta) {
-		context.save()
-		context.translate(this.pos.x, this.pos.y)
-		context.rotate(this.pos.angle)
-		if (this.isdead) context.scale(1,-1)
+		context.save();
+		context.translate(this.pos.x, this.pos.y);
+		context.rotate(this.pos.angle);
+		if (this.isdead) context.scale(1,-1);
 		if (this.img !== undefined)
 			context.drawImage(this.img, -this.size/2, -this.size, this.size, this.size);
 		// context.fillText("vel: " + JSON.stringify(this.vel), 10, 10);
-		context.restore()
+		context.restore();
 		if (config.drawhitboxes) {
-			context.save()
-			context.fillStyle = "#f00"
-			var box = this.getCollisionBox()
-			context.fillRect(box.x, box.y, box.w, box.h)
-			context.restore()
+			context.save();
+			context.fillStyle = "#f00";
+			var box = this.getCollisionBox();
+			context.fillRect(box.x, box.y, box.w, box.h);
+			context.restore();
 		}
 	},
 	update: function(delta) {
@@ -290,7 +290,7 @@ game.player = {
 			this.pos.y = 0;
 			this.vel.y *= this.vel.y < -.1 ? -.5 : 0;
 			// this.vel.y = this.stats.jump
-			this.die()
+			this.die();
 		} else {
 			this.vel.y += game.world.gravity * delta;
 		}
@@ -309,7 +309,7 @@ game.player = {
 	},
 	init: function() {
 		game.world.register(this);
-		this.img = imageLoader.loadImage("assets/images/nerp2.png")
+		this.img = imageLoader.loadImage("assets/images/nerp2.png");
 	},
 	getCollisionBox: function() {
 		return {
@@ -317,37 +317,37 @@ game.player = {
 			y: this.pos.y + this.hitbox.offsety - this.hitbox.h,
 			w: this.hitbox.w,
 			h: this.hitbox.h
-		}
+		};
 	},
 	die: function() {
 		if (this.isdead) return;
 		this.isdead = true;
 	},
 	reset: function() {
-		this.isdead = false
-		this.pos.y = config.size.height/2
-		this.pos.angle = 0
-		this.vel.y = 0
-		this.score = 0
+		this.isdead = false;
+		this.pos.y = config.size.height/2;
+		this.pos.angle = 0;
+		this.vel.y = 0;
+		this.score = 0;
 
-		document.getElementById("title").innerHTML = "Floaty Nerp! Score: " + this.score
+		document.getElementById("title").innerHTML = "Floaty Nerp! Score: " + this.score;
 	},
 	addScore: function(points) {
-		this.score += points
-		document.getElementById("title").innerHTML = "Floaty Nerp! Score: " + this.score
+		this.score += points;
+		document.getElementById("title").innerHTML = "Floaty Nerp! Score: " + this.score;
 
 		//when the game is beaten
 		if (this.score >= 100) {
-			game.start()
-			game.world.gravity *= 1.2
-			this.stats.jump *= 1.2
-			document.getElementById("title").innerHTML = "Floaty Nerp! Difficulty Increased!!!!!"
-			game.diff++
-			document.title = "Floaty Nerp! (diff: " + game.diff + ")"
+			game.start();
+			game.world.gravity *= 1.2;
+			this.stats.jump *= 1.2;
+			document.getElementById("title").innerHTML = "Floaty Nerp! Difficulty Increased!!!!!";
+			game.diff++;
+			document.title = "Floaty Nerp! (diff: " + game.diff + ")";
 
 		}
 	}
-}
+};
 
 game.walls = {
 	stats: {
@@ -369,7 +369,7 @@ game.walls = {
 					y: this.pos.y - game.walls.stats.gap/2,
 					w: 1,
 					h: game.walls.stats.gap
-				}
+				};
 			},
 			getBoxes: function() {
 				return [
@@ -387,30 +387,30 @@ game.walls = {
 						// h: config.size.height //goes offscreen
 						h: Math.max(300, config.size.height - (this.pos.y + game.walls.stats.gap/2))
 					}
-				]
+				];
 			}
-		})
+		});
 	},
 	render: function(delta) {
 		for (var i = 0; i < this.walls.length; i++) {
-			var boxes = this.walls[i].getBoxes()
-			context.save()
+			var boxes = this.walls[i].getBoxes();
+			context.save();
 			if (config.drawhitboxes) {
-				context.fillStyle = "#00ff00"
-				var check = this.walls[i].getCheckpointHitbox()
-				context.fillRect(check.x, check.y, check.w, check.h)
-				context.fillStyle = "#ff0000"
-				context.fillRect(boxes[0].x, boxes[0].y, boxes[0].w, boxes[0].h)
-				context.fillRect(boxes[1].x, boxes[1].y, boxes[1].w, boxes[1].h)
+				context.fillStyle = "#00ff00";
+				var check = this.walls[i].getCheckpointHitbox();
+				context.fillRect(check.x, check.y, check.w, check.h);
+				context.fillStyle = "#ff0000";
+				context.fillRect(boxes[0].x, boxes[0].y, boxes[0].w, boxes[0].h);
+				context.fillRect(boxes[1].x, boxes[1].y, boxes[1].w, boxes[1].h);
 			}
 			if (this.columnimg !== undefined) {
-				context.save()
-				context.scale(1, -1)
-				context.drawImage(this.columnimg, boxes[0].x, -boxes[0].y, boxes[0].w, -boxes[0].h)
-				context.restore()
-				context.drawImage(this.columnimg, boxes[1].x, boxes[1].y, boxes[1].w, boxes[1].h)
+				context.save();
+				context.scale(1, -1);
+				context.drawImage(this.columnimg, boxes[0].x, -boxes[0].y, boxes[0].w, -boxes[0].h);
+				context.restore();
+				context.drawImage(this.columnimg, boxes[1].x, boxes[1].y, boxes[1].w, boxes[1].h);
 			}
-			context.restore()
+			context.restore();
 		}
 	},
 	update: function(delta) {
@@ -418,17 +418,17 @@ game.walls = {
 		for (var i = 0; i < this.walls.length; i++) {
 			if (this.walls[i].pos.x < -this.stats.width) {
 				//remove walls that are offscreen to the left
-				this.walls.splice(i--, 1)
+				this.walls.splice(i--, 1);
 			} else {
 				//check for collision
 				if (areCollided(this.walls[i].getBoxes()[0], game.player.getCollisionBox())
 						|| areCollided(this.walls[i].getBoxes()[1], game.player.getCollisionBox())) {
-					game.player.die()
+					game.player.die();
 				}
 				//check for checkpoint collision
 				if (!this.walls[i].passed && areCollided(this.walls[i].getCheckpointHitbox(), game.player.getCollisionBox())) {
-					this.walls[i].passed = true
-					game.player.addScore(1)
+					this.walls[i].passed = true;
+					game.player.addScore(1);
 				}
 				//move the wall
 				this.walls[i].pos.x -= this.stats.speed * delta;
@@ -436,10 +436,10 @@ game.walls = {
 		}
 	},
 	init: function() {
-		game.world.register(this)
-		this.columnimg = imageLoader.loadImage("assets/images/kelp.png")
+		game.world.register(this);
+		this.columnimg = imageLoader.loadImage("assets/images/kelp.png");
 	}
-}
+};
 
 game.init();
 
@@ -451,14 +451,14 @@ var oldtime, time;
 
 	if (!imageLoader.doneLoading()) {
 		game.render(0);
-		context.fillStyle = "rgba(0, 0, 0, .5)"
-		context.fillRect(0, 0, config.size.width, config.size.height)
+		context.fillStyle = "rgba(0, 0, 0, .5)";
+		context.fillRect(0, 0, config.size.width, config.size.height);
 
-		context.fillStyle = "#fff"
-		context.textAlign = "center"
-		context.font = "48pt Sans"
+		context.fillStyle = "#fff";
+		context.textAlign = "center";
+		context.font = "48pt Sans";
 		context.fillText("Loading ("+imageLoader.loaded+"/"+imageLoader.total+")",
-			config.size.width/2, config.size.height/2)
+			config.size.width/2, config.size.height/2);
 
 		oldtime = Date.now();
 	} else {
