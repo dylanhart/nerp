@@ -339,8 +339,7 @@ game.player = {
 		//when the game is beaten
 		if (this.score >= 100) {
 			game.start();
-			game.world.gravity *= 1.2;
-			this.stats.jump *= 1.2;
+			game.walls.stats.gap -= 10;
 			document.getElementById("title").innerHTML = "Floaty Nerp! Difficulty Increased!!!!!";
 			game.diff++;
 			document.title = "Floaty Nerp! (diff: " + game.diff + ")";
