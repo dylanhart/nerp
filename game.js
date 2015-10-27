@@ -398,8 +398,9 @@ game.walls = {
 			}
 			if (this.columnimg !== undefined) {
 				context.save();
-				context.scale(1, -1);
-				context.drawImage(this.columnimg, boxes[0].x, -boxes[0].y, boxes[0].w, -boxes[0].h);
+				context.translate(boxes[0].x, boxes[0].y);
+				context.rotate(Math.PI);
+				context.drawImage(this.columnimg, -boxes[0].w, -boxes[0].h, boxes[0].w, boxes[0].h);
 				context.restore();
 				context.drawImage(this.columnimg, boxes[1].x, boxes[1].y, boxes[1].w, boxes[1].h);
 			}
@@ -424,7 +425,10 @@ game.walls = {
 					game.player.addScore(1);
 				}
 				//move the wall
+				var xxx = this.walls[i].pos.x;
 				this.walls[i].pos.x -= this.stats.speed * delta;
+				if (!this.walls[i].pos.x && xxx)
+					console.log(xxx + " -> " + this.walls[i].pos.x + " : " + delta);
 			}
 		}
 	},
@@ -437,7 +441,8 @@ game.walls = {
 game.init();
 
 //start
-var oldtime, time;
+var oldtime = Date.now();
+var time;
 
 (function loop() {
 	window.requestAnimFrame(loop);
