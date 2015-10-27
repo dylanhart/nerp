@@ -2,8 +2,8 @@
 	width: 95%;
 	max-width: 400px;
 	border: 1px solid #ccc;
-    display: inline-block;
-    position: relative;
+	display: inline-block;
+	position: relative;
 }
 #game::after {
 	padding-top: 150%;

@@ -2,12 +2,12 @@ var canvas = document.getElementById("game");
 var context = canvas.getContext("2d");
 
 window.requestAnimFrame = (function(){
-  return  window.requestAnimationFrame       ||
-          window.webkitRequestAnimationFrame ||
-          window.mozRequestAnimationFrame    ||
-          function( callback ){
-            window.setTimeout(callback, 1000 / 60);
-          };
+	return window.requestAnimationFrame
+			|| window.webkitRequestAnimationFrame
+			|| window.mozRequestAnimationFrame
+			|| function(callback) {
+				window.setTimeout(callback, 1000 / 60);
+			};
 })();
 
 var config = {
@@ -63,7 +63,7 @@ var controls = {
 	keystate: {},
 	callbacks: {},
 	touchCallbacks: [],
-    clickCallbacks: [],
+	clickCallbacks: [],
 	press: function(key) {
 		this.keystate[key] = true;
 
@@ -81,11 +81,11 @@ var controls = {
 			this.touchCallbacks[i]();
 		}
 	},
-    click: function() {
-        for (var i = 0; i < this.clickCallbacks.length; i++) {
-            this.clickCallbacks[i]();
-        }
-    },
+	click: function() {
+		for (var i = 0; i < this.clickCallbacks.length; i++) {
+			this.clickCallbacks[i]();
+		}
+	},
 	onPress: function(key, func) {
 		if (this.callbacks[key] === undefined) {
 			this.callbacks[key] = [];
@@ -95,9 +95,9 @@ var controls = {
 	onTouch: function(func) {
 		this.touchCallbacks.push(func);
 	},
-    onClick: function(func) {
-        this.clickCallbacks.push(func);
-    },
+	onClick: function(func) {
+		this.clickCallbacks.push(func);
+	},
 	getState: function(name) {
 		var state = this.keystate[config.keymap[name]];
 		if (state === undefined) {
@@ -168,7 +168,7 @@ var game = {
 			game.player.jump();
 		});
 
-        var jumpOrRestart = function() {
+		var jumpOrRestart = function() {
 			if (game.player.isdead) {
 				game.start();
 			} else {
@@ -176,7 +176,7 @@ var game = {
 			}
 		};
 
-        controls.onPress(config.keymap.space, jumpOrRestart);
+		controls.onPress(config.keymap.space, jumpOrRestart);
 		controls.onTouch(jumpOrRestart);
 		controls.onClick(jumpOrRestart);
 	},
@@ -187,7 +187,7 @@ var game = {
 			game.walls.createWall(config.size.width*2 + (i * 200), Math.random() * (config.size.height - 300) + 150);
 		}
 		game.player.reset();
-        game.player.jump();
+		game.player.jump();
 	}
 };
 
