@@ -256,13 +256,16 @@ game.player = {
 	},
 	isdead: false,
 	score: 0,
+	isapie: false,
 	render: function(delta) {
 		context.save();
 		context.translate(this.pos.x, this.pos.y);
 		context.rotate(this.pos.angle);
 		if (this.isdead) context.scale(1,-1);
-		if (this.img !== undefined)
-			context.drawImage(this.img, -this.size/2, -this.size, this.size, this.size);
+		if (this.img !== undefined) {
+			var img = (this.isapie) ? this.pieimg : this.img;
+			context.drawImage(img, -this.size/2, -this.size, this.size, this.size);
+		}
 		// context.fillText("vel: " + JSON.stringify(this.vel), 10, 10);
 		context.restore();
 		if (config.drawhitboxes) {
@@ -304,6 +307,7 @@ game.player = {
 	init: function() {
 		game.world.register(this);
 		this.img = imageLoader.loadImage("assets/images/nerp2.png");
+		this.pieimg = imageLoader.loadImage("assets/images/pie.png");
 	},
 	getCollisionBox: function() {
 		return {
@@ -330,6 +334,11 @@ game.player = {
 		this.score += points;
 		document.getElementById("title").innerHTML = "Floaty Nerp! Score: " + this.score;
 
+		// pie mode
+		if (this.score == 14 && game.diff == 3) {
+			this.isapie = true;
+		}
+
 		//when the game is beaten
 		if (this.score >= 100) {
 			game.start();
@@ -337,7 +346,6 @@ game.player = {
 			document.getElementById("title").innerHTML = "Floaty Nerp! Difficulty Increased!!!!!";
 			game.diff++;
 			document.title = "Floaty Nerp! (diff: " + game.diff + ")";
-
 		}
 	}
 };
