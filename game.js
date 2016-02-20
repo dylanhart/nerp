@@ -258,7 +258,7 @@ game.player = {
 		offsety: -4
 	},
 	isdead: false,
-	highscore: 0,
+	highscore: localStorage.getItem("nerp.highscore") || 0,
 	score: 0,
 	isapie: false,
 	render: function(delta) {
@@ -324,6 +324,11 @@ game.player = {
 	die: function() {
 		if (this.isdead) return;
 		this.isdead = true;
+
+		// high scores
+		if (this.score > this.highscore)
+			this.highscore = this.score;
+		localStorage.setItem("nerp.highscore", this.highscore);
 	},
 	reset: function() {
 		this.isdead = false;
@@ -336,8 +341,6 @@ game.player = {
 	},
 	addScore: function(points) {
 		this.score += points;
-		if (this.score > this.highscore)
-			this.highscore = this.score;
 		document.getElementById("title").innerHTML = "Floaty Nerp! Score: " + this.score;
 
 		// pie mode
