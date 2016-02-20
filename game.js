@@ -137,12 +137,15 @@ var game = {
 
 			context.fillStyle = "#fff";
 			context.textAlign = "center";
+			context.font = "18pt Sans";
+			context.fillText("High Score: " + this.player.highscore,
+				config.size.width/2, 36);
 			context.font = "36pt Sans";
 			context.fillText("Score: " + this.player.score,
 				config.size.width/2, config.size.height/2);
 			context.font = "14pt Sans";
 			context.fillText("R to restart", config.size.width/2,
-				config.size.height/2+18);
+				config.size.height/2+24);
 		}
 	},
 	init: function() {
@@ -255,6 +258,7 @@ game.player = {
 		offsety: -4
 	},
 	isdead: false,
+	highscore: localStorage.getItem("nerp.highscore") || 0,
 	score: 0,
 	isapie: false,
 	render: function(delta) {
@@ -320,6 +324,11 @@ game.player = {
 	die: function() {
 		if (this.isdead) return;
 		this.isdead = true;
+
+		// high scores
+		if (this.score > this.highscore)
+			this.highscore = this.score;
+		localStorage.setItem("nerp.highscore", this.highscore);
 	},
 	reset: function() {
 		this.isdead = false;
