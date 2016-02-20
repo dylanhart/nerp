@@ -341,17 +341,8 @@ game.player = {
 		document.getElementById("title").innerHTML = "Floaty Nerp! Score: " + this.score;
 
 		// pie mode
-		if (this.score == 14 && game.diff == 3) {
+		if (this.score == 314) {
 			this.isapie = true;
-		}
-
-		//when the game is beaten
-		if (this.score >= 100) {
-			game.start();
-			game.walls.stats.gap -= 10;
-			document.getElementById("title").innerHTML = "Floaty Nerp! Difficulty Increased!!!!!";
-			game.diff++;
-			document.title = "Floaty Nerp! (diff: " + game.diff + ")";
 		}
 	}
 };
