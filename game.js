@@ -191,6 +191,14 @@ var game = {
 	}
 };
 
+game.util = {
+	logistic_fn: function(L, k, x0) {
+		return function(x) {
+			return L / (1 + Math.pow(Math.E, -k * (x - x0)));
+		};
+	}
+};
+
 game.world = {
 	gravity: -.0005,
 	entities: [],
@@ -355,7 +363,15 @@ game.walls = {
 		startgap: config.size.width*2,
 		wallgap: 200,
 		padding: 150,
-		count: 5
+		count: 5,
+		difficulty: (function() {
+			// increases in difficulty until around 140
+			var f1 = game.util.logistic_fn(10, .2, 30);
+			var f2 = game.util.logistic_fn(20, .05, 100);
+			return function(score) {
+				return f1(score) + f2(score);
+			};
+		})()
 	},
 	walls: [],
 	createWall: function(xpos) {
@@ -367,28 +383,30 @@ game.walls = {
 			},
 			passed: false,
 			getCheckpointHitbox: function() {
+				var gap = game.walls.stats.gap - game.walls.stats.difficulty(game.player.score);
 				return {
 					x: this.pos.x + game.walls.stats.width/2,
 					y: this.pos.y - game.walls.stats.gap/2,
 					w: 1,
-					h: game.walls.stats.gap
+					h: gap
 				};
 			},
 			getBoxes: function() {
+				var gap = game.walls.stats.gap - game.walls.stats.difficulty(game.player.score);
 				return [
 					{
 						x: this.pos.x,
-						y: this.pos.y - game.walls.stats.gap/2 - Math.max(300, this.pos.y - game.walls.stats.gap/2), //goes offscreen
+						y: this.pos.y - gap/2 - Math.max(300, this.pos.y - gap/2), //goes offscreen
 						w: game.walls.stats.width,
 						// h: this.pos.y - game.walls.stats.gap/2 + 100
-						h: Math.max(300, this.pos.y - game.walls.stats.gap/2)
+						h: Math.max(300, this.pos.y - gap/2)
 					},
 					{
 						x: this.pos.x,
-						y: this.pos.y + game.walls.stats.gap/2,
+						y: this.pos.y + gap/2,
 						w: game.walls.stats.width,
 						// h: config.size.height //goes offscreen
-						h: Math.max(300, config.size.height - (this.pos.y + game.walls.stats.gap/2))
+						h: Math.max(300, config.size.height - (this.pos.y + gap/2))
 					}
 				];
 			}
