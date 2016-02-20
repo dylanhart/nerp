@@ -386,7 +386,7 @@ game.walls = {
 				var gap = game.walls.stats.gap - game.walls.stats.difficulty(game.player.score);
 				return {
 					x: this.pos.x + game.walls.stats.width/2,
-					y: this.pos.y - game.walls.stats.gap/2,
+					y: this.pos.y - gap/2,
 					w: 1,
 					h: gap
 				};
