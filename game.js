@@ -185,10 +185,7 @@ var game = {
 	},
 	//resets the game
 	start: function() {
-		game.walls.walls = [];
-		for (var i = 0; i < 100; i++) {
-			game.walls.createWall(config.size.width*2 + (i * 200), Math.random() * (config.size.height - 300) + 150);
-		}
+		game.walls.reset();
 		game.player.reset();
 		game.player.jump();
 	}
@@ -364,10 +361,15 @@ game.walls = {
 		speed: .1,
 		gap: 125,
 		width: 48,
+		startgap: config.size.width*2,
+		wallgap: 200,
+		padding: 150,
+		count: 5
 	},
 	walls: [],
-	createWall: function(xpos, ypos) {
-		this.walls.push({
+	createWall: function(xpos) {
+		var ypos = Math.random() * (config.size.height - 2*this.stats.padding) + this.stats.padding;
+		return {
 			pos: {
 				x: xpos,
 				y: ypos,
@@ -399,7 +401,7 @@ game.walls = {
 					}
 				];
 			}
-		});
+		};
 	},
 	render: function(delta) {
 		for (var i = 0; i < this.walls.length; i++) {
@@ -428,8 +430,8 @@ game.walls = {
 		if (game.player.isdead) return;
 		for (var i = 0; i < this.walls.length; i++) {
 			if (this.walls[i].pos.x < -this.stats.width) {
-				//remove walls that are offscreen to the left
-				this.walls.splice(i--, 1);
+				//replace offscreen wall
+				this.walls[i] = this.createWall(this.walls[i].pos.x + this.stats.count * this.stats.wallgap)
 			} else {
 				//check for collision
 				if (areCollided(this.walls[i].getBoxes()[0], game.player.getCollisionBox())
@@ -452,6 +454,14 @@ game.walls = {
 	init: function() {
 		game.world.register(this);
 		this.columnimg = imageLoader.loadImage("assets/images/kelp.png");
+	},
+	reset: function() {
+		this.walls = [];
+		for (var i = 0; i < this.stats.count; i++) {
+			var xpos = this.stats.startgap + i*this.stats.wallgap;
+
+			this.walls.push(this.createWall(xpos));
+		}
 	}
 };
 
