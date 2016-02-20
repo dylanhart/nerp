@@ -185,12 +185,17 @@ var game = {
 	},
 	//resets the game
 	start: function() {
-		game.walls.walls = [];
-		for (var i = 0; i < 100; i++) {
-			game.walls.createWall(config.size.width*2 + (i * 200), Math.random() * (config.size.height - 300) + 150);
-		}
+		game.walls.reset();
 		game.player.reset();
 		game.player.jump();
+	}
+};
+
+game.util = {
+	logistic_fn: function(L, k, x0) {
+		return function(x) {
+			return L / (1 + Math.pow(Math.E, -k * (x - x0)));
+		};
 	}
 };
 
@@ -344,17 +349,8 @@ game.player = {
 		document.getElementById("title").innerHTML = "Floaty Nerp! Score: " + this.score;
 
 		// pie mode
-		if (this.score == 14 && game.diff == 3) {
+		if (this.score == 314) {
 			this.isapie = true;
-		}
-
-		//when the game is beaten
-		if (this.score >= 100) {
-			game.start();
-			game.walls.stats.gap -= 10;
-			document.getElementById("title").innerHTML = "Floaty Nerp! Difficulty Increased!!!!!";
-			game.diff++;
-			document.title = "Floaty Nerp! (diff: " + game.diff + ")";
 		}
 	}
 };
@@ -364,42 +360,57 @@ game.walls = {
 		speed: .1,
 		gap: 125,
 		width: 48,
+		startgap: config.size.width*2,
+		wallgap: 200,
+		padding: 150,
+		count: 5,
+		difficulty: (function() {
+			// increases in difficulty until around 140
+			var f1 = game.util.logistic_fn(10, .2, 30);
+			var f2 = game.util.logistic_fn(20, .05, 100);
+			return function(score) {
+				return f1(score) + f2(score);
+			};
+		})()
 	},
 	walls: [],
-	createWall: function(xpos, ypos) {
-		this.walls.push({
+	createWall: function(xpos) {
+		var ypos = Math.random() * (config.size.height - 2*this.stats.padding) + this.stats.padding;
+		return {
 			pos: {
 				x: xpos,
 				y: ypos,
 			},
 			passed: false,
 			getCheckpointHitbox: function() {
+				var gap = game.walls.stats.gap - game.walls.stats.difficulty(game.player.score);
 				return {
 					x: this.pos.x + game.walls.stats.width/2,
-					y: this.pos.y - game.walls.stats.gap/2,
+					y: this.pos.y - gap/2,
 					w: 1,
-					h: game.walls.stats.gap
+					h: gap
 				};
 			},
 			getBoxes: function() {
+				var gap = game.walls.stats.gap - game.walls.stats.difficulty(game.player.score);
 				return [
 					{
 						x: this.pos.x,
-						y: this.pos.y - game.walls.stats.gap/2 - Math.max(300, this.pos.y - game.walls.stats.gap/2), //goes offscreen
+						y: this.pos.y - gap/2 - Math.max(300, this.pos.y - gap/2), //goes offscreen
 						w: game.walls.stats.width,
 						// h: this.pos.y - game.walls.stats.gap/2 + 100
-						h: Math.max(300, this.pos.y - game.walls.stats.gap/2)
+						h: Math.max(300, this.pos.y - gap/2)
 					},
 					{
 						x: this.pos.x,
-						y: this.pos.y + game.walls.stats.gap/2,
+						y: this.pos.y + gap/2,
 						w: game.walls.stats.width,
 						// h: config.size.height //goes offscreen
-						h: Math.max(300, config.size.height - (this.pos.y + game.walls.stats.gap/2))
+						h: Math.max(300, config.size.height - (this.pos.y + gap/2))
 					}
 				];
 			}
-		});
+		};
 	},
 	render: function(delta) {
 		for (var i = 0; i < this.walls.length; i++) {
@@ -428,8 +439,8 @@ game.walls = {
 		if (game.player.isdead) return;
 		for (var i = 0; i < this.walls.length; i++) {
 			if (this.walls[i].pos.x < -this.stats.width) {
-				//remove walls that are offscreen to the left
-				this.walls.splice(i--, 1);
+				//replace offscreen wall
+				this.walls[i] = this.createWall(this.walls[i].pos.x + this.stats.count * this.stats.wallgap)
 			} else {
 				//check for collision
 				if (areCollided(this.walls[i].getBoxes()[0], game.player.getCollisionBox())
@@ -452,6 +463,14 @@ game.walls = {
 	init: function() {
 		game.world.register(this);
 		this.columnimg = imageLoader.loadImage("assets/images/kelp.png");
+	},
+	reset: function() {
+		this.walls = [];
+		for (var i = 0; i < this.stats.count; i++) {
+			var xpos = this.stats.startgap + i*this.stats.wallgap;
+
+			this.walls.push(this.createWall(xpos));
+		}
 	}
 };
 
