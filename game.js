@@ -257,9 +257,9 @@ game.player = {
 	},
 	size: 48,
 	hitbox: {
-		w: 24,
-		h: 30,
-		offsetx: 6,
+		w: 20,
+		h: 20,
+		offsetx: 2,
 		offsety: -4
 	},
 	isdead: false,
